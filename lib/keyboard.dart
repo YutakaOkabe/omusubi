@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:omusubi/board.dart';
 import 'package:omusubi/provider.dart';
+import 'package:collection/collection.dart';
 
 class GameKeyboard extends StatefulWidget {
   GameKeyboard(this.game, {Key? key}) : super(key: key); // コンストラクタをここで定義
@@ -11,30 +13,41 @@ class GameKeyboard extends StatefulWidget {
 }
 
 class _GameKeyboardState extends State<GameKeyboard> {
-  List row1 = "QWERTYUIOP".split("");
-  List row2 = "ASDFGHJKL".split("");
-  List row3 = ["DEL", "Z", "X", "C", "V", "B", "N", "M", "SUBMIT"];
+  Map row1 = {
+    "nori": "images/nori.png",
+    "tarako": "images/tarako.png",
+    "mame": "images/mame.png",
+    "yukari": "images/yukari.png",
+  };
+  Map row2 = {
+    "konbu": "images/konbu.png",
+    "tuna": "images/tuna.png",
+    "ikura": "images/ikura.png",
+    "ume": "images/ume.png",
+  };
+  List row3 = ["DELETE", "SUBMIT"];
 
   @override
   Widget build(BuildContext context) {
-    print('message: ${OmusubiGame.game_message}');
     return Column(
       children: [
         Text(OmusubiGame.game_message,
-            style: const TextStyle(color: Colors.black)),
+            style: const TextStyle(
+                color: Colors.black,
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold)),
         const SizedBox(height: 20.0),
         GameBoard(widget.game),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: row1
+          children: row1.keys
               .map((e) => InkWell(
                     onTap: () {
-                      print(e);
                       // letterIdが最後まで行ってなかったら入力可
                       if (widget.game.letterId < 5) {
                         setState(() {
-                          widget.game
-                              .insertWord(widget.game.letterId, Letter(e, 0));
+                          widget.game.insertWord(
+                              widget.game.letterId, Letter(e, row1[e], 0));
                           widget.game.letterId++;
                         });
                       }
@@ -56,14 +69,13 @@ class _GameKeyboardState extends State<GameKeyboard> {
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: row2
+          children: row2.keys
               .map((e) => InkWell(
                     onTap: () {
-                      print(e);
                       if (widget.game.letterId < 5) {
                         setState(() {
-                          widget.game
-                              .insertWord(widget.game.letterId, Letter(e, 0));
+                          widget.game.insertWord(
+                              widget.game.letterId, Letter(e, row2[e], 0));
                           widget.game.letterId++;
                         });
                       }
@@ -88,27 +100,28 @@ class _GameKeyboardState extends State<GameKeyboard> {
           children: row3
               .map((e) => InkWell(
                     onTap: () {
-                      print(e);
-                      if (e == 'DEL') {
+                      if (e == 'DELETE') {
                         if (widget.game.letterId > 0) {
                           setState(() {
                             widget.game.insertWord(
-                                widget.game.letterId - 1, Letter("", 0));
+                                widget.game.letterId - 1, Letter("", "", 0));
                             widget.game.letterId--;
                           });
                         }
                       } else if (e == 'SUBMIT') {
-                        print('letterId: ${widget.game.letterId}');
                         if (widget.game.letterId >= 5) {
-                          String guess = widget
+                          List guess = widget
                               .game.wordleBoard[widget.game.rowId]
                               .map((e) => e.letter)
-                              .join(); // ユーザーが推測した文字列
+                              .toList();
                           print('guess: ${guess}');
-                          if (guess == OmusubiGame.game_guess) {
+                          print('answer: ${OmusubiGame.game_guess}');
+
+                          Function isEqual = const ListEquality().equals;
+                          if (isEqual(guess, OmusubiGame.game_guess)) {
                             // 目標値と完全一致
                             setState(() {
-                              OmusubiGame.game_message = "Congratulations!";
+                              OmusubiGame.game_message = "Congratulations!👏👏";
                               widget.game.wordleBoard[widget.game.rowId]
                                   .forEach((element) {
                                 element.code = 1;
@@ -120,10 +133,10 @@ class _GameKeyboardState extends State<GameKeyboard> {
                             bool findAtLeastOne = false;
                             for (int i = 0; i < listLength; i++) {
                               // ユーザーが推測した1文字1文字を検証する
-                              String char = guess[i];
-                              print(char);
-                              if (OmusubiGame.game_guess.contains(char)) {
-                                if (OmusubiGame.game_guess[i] == char) {
+                              String gu = guess[i];
+                              print(gu);
+                              if (OmusubiGame.game_guess.contains(gu)) {
+                                if (OmusubiGame.game_guess[i] == gu) {
                                   // 場所まで一致している場合
                                   setState(() {
                                     widget
@@ -157,14 +170,8 @@ class _GameKeyboardState extends State<GameKeyboard> {
                             widget.game.letterId = 0;
                           }
                         } else {
-                          OmusubiGame.game_message = "文字数が足りません";
-                        }
-                      } else {
-                        if (widget.game.letterId < 5) {
                           setState(() {
-                            widget.game
-                                .insertWord(widget.game.letterId, Letter(e, 0));
-                            widget.game.letterId++;
+                            OmusubiGame.game_message = "おにぎりが足りません";
                           });
                         }
                       }

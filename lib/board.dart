@@ -20,10 +20,9 @@ class _GameBoardState extends State<GameBoard> {
                 children: e
                     .map((e) => Container(
                         // 1文字分
-                        padding: const EdgeInsets.all(16.0),
                         width: 64,
                         height: 64,
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        margin: const EdgeInsets.symmetric(vertical: 4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                           color: e.code == 0
@@ -33,14 +32,13 @@ class _GameBoardState extends State<GameBoard> {
                                   : Colors.amber.shade400, // 文字が存在
                         ),
                         child: Center(
-                          child: Text(
-                            e.letter!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          child: e.icon.length >= 1
+                              ? Image.asset(
+                                  e.icon,
+                                  width: 52,
+                                  height: 52,
+                                )
+                              : Text(""),
                         )))
                     .toList(),
               ))
