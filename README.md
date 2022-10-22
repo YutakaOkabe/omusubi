@@ -1,16 +1,11 @@
-# omusubi
+# おむすび探偵団アプリ
 
-A new Flutter project.
+Flutterでつくってみた
+画面サイズの関係上ちょっとルールは改訂している
 
-## Getting Started
+## ルール
+- 具のみあってたらマスが黄色に、場所まであってたらマスが緑色になる
+- 同じ具は複数回使える
 
-This project is a starting point for a Flutter application.
+https://user-images.githubusercontent.com/56837776/197334130-d75ae2f6-bd07-4fa6-ad16-4f8df106eebb.mp4
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
